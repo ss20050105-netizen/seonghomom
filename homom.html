@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>하늘에서의 상봉 - 윤성호 이야기</title>
+    <style>
+        /* 천국의 몽환적인 파스텔 톤 색상표 */
+        :root {
+            --sky-bg: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            --cloud-color: rgba(255, 255, 255, 0.4);
+            --son-color: #3b82f6;
+            --mom-color: #ec4899;
+            --light-center: #fef08a;
+        }
+        
+        /* 문학적인 느낌을 위해 명조체 계열 폰트 적용 */
+        @import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700&display=swap');
+        
+        body { 
+            background: var(--sky-bg); color: #1e293b; font-family: 'Nanum Myeongjo', serif; 
+            margin: 0; padding: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; 
+        }
+        
+        .header { height: 70px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.3); border-bottom: 1px solid rgba(255,255,255,0.5); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .header h1 { color: #0f172a; font-size: 26px; text-shadow: 0 2px 4px rgba(255,255,255,0.8); }
+        
+        .main-container { display: flex; flex: 1; width: 100%; height: calc(100vh - 70px); }
+        
+        /* 왼쪽: 천국의 구름길 (맵) */
+        .left-panel { flex: 1.3; display: flex; align-items: center; justify-content: center; border-right: 1px solid rgba(255,255,255,0.5); }
+        
+        /* 오른쪽: 문학 텍스트 (채팅창) */
+        .right-panel { flex: 0.7; display: flex; flex-direction: column; background: rgba(255,255,255,0.6); padding: 30px; backdrop-filter: blur(10px); }
+        
+        #heaven-container { position: relative; padding: 25px; background: rgba(255, 255, 255, 0.2); border-radius: 20px; box-shadow: 0 0 40px rgba(255,255,255,0.6); backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.8); }
+        
+        #grid { display: grid; grid-template-columns: repeat(9, 65px); grid-template-rows: repeat(9, 65px); gap: 8px; }
+        .cell { width: 65px; height: 65px; background: var(--cloud-color); border-radius: 50%; position: relative; box-shadow: inset 0 0 10px rgba(255,255,255,0.8); }
+        
+        /* 중앙 만남의 장소 (빛의 기둥) */
+        .meeting-point { 
+            background: radial-gradient(circle, #fffbeb 0%, #fde047 100%) !important; 
+            box-shadow: 0 0 30px #fde047, inset 0 0 20px #fff !important; 
+            transform: scale(1.1); z-index: 5;
+        }
+        .table-label { position: absolute; width: 100%; top: -25px; text-align: center; font-size: 13px; color: #ca8a04; font-weight: bold; letter-spacing: 2px; }
+
+        .agent-wrapper { position: absolute; width: 65px; height: 65px; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 1.8s ease-in-out; z-index: 10; }
+        .agent-body { width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border: 2px solid white; }
+        .agent-name { font-size: 13px; font-weight: bold; margin-bottom: 6px; padding: 3px 10px; border-radius: 12px; white-space: nowrap; font-family: 'Pretendard', sans-serif; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        
+        .thought-bubble { 
+            position: absolute; bottom: 85px; background: white; color: #334155; 
+            padding: 10px 15px; border-radius: 15px; font-size: 14px; font-weight: bold;
+            white-space: nowrap; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            opacity: 0; transition: opacity 0.6s; pointer-events: none; z-index: 20;
+            font-family: 'Nanum Myeongjo', serif;
+        }
+        .thought-bubble::after {
+            content: ''; position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%);
+            border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid white;
+        }
+
+        #son .agent-name { background: var(--son-color); color: white; }
+        #mom .agent-name { background: var(--mom-color); color: white; }
+
+        #log { flex: 1; overflow-y: auto; padding: 25px; font-size: 17px; line-height: 2.2; border-radius: 15px; background: rgba(255,255,255,0.7); box-shadow: inset 0 0 10px rgba(0,0,0,0.05); }
+        .system-msg { color: #64748b; font-weight: bold; display: block; margin-bottom: 25px; text-align: center; border-bottom: 1px solid #cbd5e1; padding-bottom: 15px; letter-spacing: 1px; }
+        .son-msg { color: #1e40af; margin-bottom: 20px; border-left: 3px solid var(--son-color); padding-left: 15px; }
+        .mom-msg { color: #be185d; margin-bottom: 20px; border-left: 3px solid var(--mom-color); padding-left: 15px; }
+        
+        /* 문학적 결말 보드 UI */
+        .result-board { background: rgba(255, 255, 255, 0.9); border: 1px solid #cbd5e1; border-radius: 15px; padding: 30px; margin-top: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; }
+        .result-title { color: #334155; font-weight: bold; font-size: 20px; margin-bottom: 20px; }
+        .result-text { color: #475569; font-size: 16px; line-height: 2.0; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="header"><h1>🕊️ 빛나는 구름다리 너머: 성호와 어머니의 상봉</h1></div>
+    
+    <div class="main-container">
+        <div class="left-panel">
+            <div id="heaven-container">
+                <div id="grid"></div>
+            </div>
+        </div>
+        <div class="right-panel">
+            <h2 style="color: #475569; font-size: 18px; margin-top:0; letter-spacing: 2px;">영혼의 기록</h2>
+            <div id="log">
+                <span class="system-msg">긴 세월의 그리움이 구름길을 따라 걷기 시작합니다...</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const grid = document.getElementById('grid');
+        const log = document.getElementById('log');
+        const MAP_SIZE = 9;
+        const TARGET = { x: 4, y: 4 };
+
+        // 구름 모양 격자 및 중앙 빛의 기둥 생성
+        for (let i = 0; i < MAP_SIZE * MAP_SIZE; i++) {
+            const y = Math.floor(i / MAP_SIZE);
+            const x = i % MAP_SIZE;
+            const isCenter = (x === TARGET.x && y === TARGET.y);
+            grid.innerHTML += `<div class="cell ${isCenter ? 'meeting-point' : ''}">${isCenter ? '<div class="table-label">영원의 안식처</div>' : ''}</div>`;
+        }
+
+        // 성호는 하단에서, 어머니는 상단에서 출발
+        let posSon = { x: 0, y: 8 }; 
+        let posMom = { x: 8, y: 0 }; 
+        let isSimRunning = true;
+
+        let thoughtsSon = [
+            "엄마... 거기 계신가요?", "혼자 걷는 길이 참 길고 추웠어요.", "이 구름 너머에 계실까요.", 
+            "많이 늙어버린 절 알아보실까요...", "이제는 아프지 않으시죠?", "드디어 닿을 수 있을까.", 
+            "평생 동안 보고 싶었어요.", "꿈에서만 걷던 이 길...", "발걸음이 자꾸 떨리네요.", 
+            "조금만 기다려주세요, 엄마."
+        ];
+        let thoughtsMom = [
+            "우리 아들, 발소리가 들리네.", "많이 힘들었지, 내 새끼.", "단 하루도 널 잊은 적 없단다.", 
+            "천천히 오렴, 다치지 말고.", "어느새 이렇게 늠름해졌구나.", "엄마는 늘 여기서 기다렸어.", 
+            "이제 내가 꼭 안아줄게.", "울지 말고 천천히 오렴.", "대견하다, 혼자 버티느라.", 
+            "이 빛을 따라오렴, 성호야."
+        ];
+
+        function createAgent(id, name, emoji) {
+            const wrapper = document.createElement('div');
+            wrapper.id = id; wrapper.className = 'agent-wrapper';
+            wrapper.innerHTML = `<div class="thought-bubble" id="${id}-thought"></div><span class="agent-name">${name}</span><div class="agent-body">${emoji}</div>`;
+            return wrapper;
+        }
+
+        const wrapperSon = createAgent('son', '아들 성호', '🧑');
+        const wrapperMom = createAgent('mom', '어머니', '👼');
+
+        function showThought(id, thoughtList) {
+            if (!isSimRunning || thoughtList.length === 0) return;
+            const bubble = document.getElementById(`${id}-thought`);
+            const randomIndex = Math.floor(Math.random() * thoughtList.length);
+            const selectedThought = thoughtList.splice(randomIndex, 1)[0];
+            bubble.innerText = selectedThought;
+            bubble.style.opacity = 1;
+            setTimeout(() => { bubble.style.opacity = 0; }, 2000); 
+        }
+
+        function updatePos() {
+            const cells = document.querySelectorAll('.cell');
+            cells[posSon.y * MAP_SIZE + posSon.x].appendChild(wrapperSon);
+            cells[posMom.y * MAP_SIZE + posMom.x].appendChild(wrapperMom);
+            
+            showThought('son', thoughtsSon);
+            showThought('mom', thoughtsMom);
+            
+            checkCollision();
+        }
+
+        function moveTowardCenter(pos) {
+            if (pos.x < TARGET.x) pos.x++;
+            else if (pos.x > TARGET.x) pos.x--;
+            else if (pos.y < TARGET.y) pos.y++;
+            else if (pos.y > TARGET.y) pos.y--;
+        }
+
+        function checkCollision() {
+            if (posSon.x === TARGET.x && posSon.y === TARGET.y && posMom.x === TARGET.x && posMom.y === TARGET.y) {
+                isSimRunning = false;
+                clearInterval(timer);
+                startDialogue();
+            }
+        }
+
+        function startDialogue() {
+            addLog("<span class='system-msg'>✨ 수십 년의 세월을 건너, 두 영혼이 빛의 기둥에서 마주합니다.</span>");
+            
+            setTimeout(() => addLog("<div class='son-msg'><b>🧑 성호:</b> 엄마... 진짜 엄마 맞아요? 저 성호예요. 너무 늦게 와서 죄송해요. 너무 오래 기다리셨죠...</div>"), 1500);
+            setTimeout(() => addLog("<div class='mom-msg'><b>👼 어머니:</b> 아이고, 내 새끼... 하나도 안 늦었어. 여기까지 오느라 얼마나 고생이 많았어. 얼굴 좀 보자, 우리 아들.</div>"), 6000);
+            
+            setTimeout(() => addLog("<div class='son-msg'><b>🧑 성호:</b> 엄마 없이 산 날들이 참 춥고 무서웠는데... 엄마 손 잡으니까 이제야 따뜻해요. 이제 안 아프신 거죠?</div>"), 10500);
+            setTimeout(() => addLog("<div class='mom-msg'><b>👼 어머니:</b> 그럼, 엄마는 널 지켜보느라 하나도 아픈 줄 몰랐단다. 네가 넘어질 때마다 일으켜주지 못해 엄마가 더 미안했지. 훌륭하게 잘 커줘서 고맙다.</div>"), 15500);
+            
+            setTimeout(() => addLog("<div class='son-msg'><b>🧑 성호:</b> 이제 다시는 헤어지지 마요. 저 여기서 영원히 엄마 곁에만 있을래요.</div>"), 20500);
+            setTimeout(() => addLog("<div class='mom-msg'><b>👼 어머니:</b> 그래, 이제 아무 걱정 마렴. 무거운 짐 다 내려놓고 푹 쉬어. 우리 아들 좋아하는 된장찌개 끓여줄게.</div>"), 25000);
+            
+            setTimeout(() => addLog("<span class='system-msg'>⏳ 두 사람이 서로를 부둥켜안으며, 영원한 빛 속으로 녹아듭니다.</span>"), 30000);
+            
+            // 최종 문학적 결말 보드
+            setTimeout(() => {
+                const resultHTML = `
+                <div class='result-board'>
+                    <div class='result-title'>🌸 영원한 안식, 끝나지 않을 이야기</div>
+                    <div class='result-text'>
+                        현생의 차가운 눈보라 속에서 혼자 걸어야 했던 소년은,<br>
+                        비로소 어머니의 품이라는 가장 따뜻한 봄을 맞이했습니다.<br><br>
+                        이승에서의 시린 그리움은 천국에서 핀 꽃이 되었고,<br>
+                        두 사람은 이제 이별 없는 영원의 시간 속을 함께 걷습니다.
+                    </div>
+                </div>
+                `;
+                addLog(resultHTML);
+            }, 33500);
+        }
+
+        function addLog(msg) { 
+            log.innerHTML += "<div>" + msg + "</div>"; 
+            log.scrollTop = log.scrollHeight; 
+        }
+
+        // 감정선을 위해 2.5초마다 천천히 이동
+        let timer = setInterval(() => {
+            moveTowardCenter(posSon);
+            moveTowardCenter(posMom);
+            updatePos();
+        }, 2500);
+
+        updatePos();
+    </script>
+</body>
+</html>
